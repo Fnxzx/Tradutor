@@ -498,7 +498,6 @@
 
   /* Change image btn */
   .change-img-btn {
-    background: var(--surface2);
     border: 1px solid var(--border);
     color: var(--muted);
     padding: 8px 16px;
@@ -687,7 +686,7 @@
   let currentImageType = null;
 
   // ─── Aponta para o backend seguro ──────────
-  const BACKEND_URL = 'https://SEU-BACKEND.onrender.com'; // ← troque depois do deploy
+  const BACKEND_URL = 'https://translator-eua7.onrender.com';
 
   async function callClaude(messages, maxTokens = 2000) {
     const response = await fetch(`${BACKEND_URL}/translate`, {
@@ -857,8 +856,7 @@ ${text}`;
       document.getElementById('drop-zone').style.display = 'none';
       document.getElementById('image-preview-area').classList.add('show');
       document.getElementById('change-img-btn').classList.add('show');
-      document.getElementById('image-result').textContent = 'Clique em "Transcrever & Traduzir" para processar.';
-      document.getElementById('image-result').style.color = 'var(--muted)';
+      document.getElementById('image-result').textContent = 'Clique em "Transcrever & Traduzir" para começar.';
       document.getElementById('image-result').style.fontStyle = 'italic';
       hideStatus('image');
     };
