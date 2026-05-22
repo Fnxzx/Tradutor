@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TRANSLA">
+<meta name="description" content="Tradutor universal com IA — texto e imagem">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>TRANSLA — Tradutor Universal</title>
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="TRANSLA">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #181818;
+    --border: #242424;
+    --accent: #3b82f6;
+    --accent2: #ff4d6d;
+    --text: #f0f0f0;
+    --muted: #555555;
+    --muted2: #333333;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 48px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+  }
+
+  .logo {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--text);
+  }
+
+  .logo span {
+    color: var(--accent);
+  }
+
+  .tagline {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .badge {
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 5px 12px;
+    text-transform: uppercase;
+  }
+
+  /* MAIN */
+  main {
+    position: relative;
+    z-index: 10;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* MODE TOGGLE */
+  .mode-toggle {
+    display: flex;
+    gap: 2px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 4px;
+    width: fit-content;
+    margin: 0 auto 40px;
+  }
+
+  .mode-btn {
+    padding: 10px 28px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .mode-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .mode-btn:not(.active):hover {
+    color: var(--text);
+  }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* LANGUAGE BAR */
+  .lang-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .lang-select {
+    flex: 1;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+  }
+
+  .lang-select option { background: #111; }
+
+  .swap-btn {
+    width: 48px;
+    height: 48px;
+    background: var(--surface2);
+    border: none;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .swap-btn:hover { background: var(--accent); color: #fff; }
+
+  /* TEXT TRANSLATE */
+  .translate-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    min-height: 280px;
+    margin-bottom: 20px;
+  }
+
+  .text-box {
+    background: var(--surface);
+    padding: 24px;
+    position: relative;
+  }
+
+  .text-box-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 200px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+  }
+
+  textarea::placeholder { color: var(--muted); }
+
+  .output-box {
+    background: var(--surface);
+    padding: 24px;
+    position: relative;
+    min-height: 280px;
+  }
+
+  .output-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text);
+    min-height: 200px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 12px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* TRANSLATE BUTTON */
+  .translate-btn {
+    width: 100%;
+    padding: 18px;
+    background: var(--accent);
+    border: none;
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .translate-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .translate-btn:hover::before { transform: translateX(0); }
+
+  .translate-btn span {
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s;
+  }
+
+  .translate-btn:hover span { color: #3b82f6; }
+  .translate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* IMAGE PANEL */
+  .drop-zone {
+    border: 2px dashed var(--border);
+    background: var(--surface);
+    padding: 60px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(59,130,246,0.04);
+  }
+
+  .drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .drop-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .drop-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .drop-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .image-preview-area {
+    display: none;
+    gap: 20px;
+    margin-bottom: 20px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .image-preview-area.show {
+    display: grid;
+  }
+
+  .preview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px;
+  }
+
+  .preview-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  #preview-img {
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    display: block;
+    border: 1px solid var(--border);
+  }
+
+  .image-result {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* LOADING */
+  .loading-bar {
+    display: none;
+    height: 2px;
+    background: var(--border);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .loading-bar.active { display: block; }
+
+  .loading-bar::after {
+    content: '';
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    animation: loadbar 1.5s infinite;
+    width: 40%;
+  }
+
+  @keyframes loadbar {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+  }
+
+  /* STATUS */
+  .status-msg {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    display: none;
+  }
+
+  .status-msg.show { display: block; }
+  .status-msg.error { background: rgba(255,77,109,0.1); color: var(--accent2); border-left: 2px solid var(--accent2); }
+  .status-msg.success { background: rgba(59,130,246,0.08); color: var(--accent); border-left: 2px solid var(--accent); }
+  .status-msg.info { background: rgba(255,255,255,0.04); color: var(--muted); border-left: 2px solid var(--muted); }
+
+
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 10;
+    border-top: 1px solid var(--border);
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    header { padding: 16px 20px; }
+    main { padding: 32px 16px 60px; }
+    .translate-grid { grid-template-columns: 1fr; }
+    .image-preview-area { grid-template-columns: 1fr; }
+    .lang-bar { flex-wrap: wrap; }
+    footer { flex-direction: column; gap: 8px; }
+  }
+
+  /* CHAR COUNT */
+  .char-count {
+    position: absolute;
+    bottom: 12px;
+    right: 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* CLEAR BTN */
+  .clear-btn {
+    position: absolute;
+    bottom: 12px;
+    left: 16px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .clear-btn:hover { color: var(--accent2); }
+
+  /* Change image btn */
+  .change-img-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+    display: none;
+  }
+  .change-img-btn.show { display: inline-block; }
+  .change-img-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  /* Shimmer loading text */
+  .shimmer {
+    background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    height: 16px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">TRANS<span>LA</span></div>
+    <div class="tagline">Tradutor Universal com IA</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button id="install-btn" onclick="installApp()" style="display:none;align-items:center;gap:8px;background:var(--accent);border:none;color:#fff;padding:8px 18px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">
+      ⬇ Instalar App
+    </button>
+    <div class="badge">AI Powered</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- MODE TOGGLE -->
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="switchMode('text')">✦ Texto</button>
+    <button class="mode-btn" onclick="switchMode('image')">⊞ Imagem</button>
+  </div>
+
+  <!-- TEXT PANEL -->
+  <div class="panel active" id="panel-text">
+
+    <div class="lang-bar">
+      <select class="lang-select" id="lang-from">
+        <option value="auto">Detectar idioma</option>
+        <option value="Português">🇧🇷 Português</option>
+        <option value="Inglês">🇺🇸 Inglês</option>
+        <option value="Espanhol">🇪🇸 Espanhol</option>
+        <option value="Árabe">🇸🇦 Árabe</option>
+        <option value="Francês">🇫🇷 Francês</option>
+        <option value="Alemão">🇩🇪 Alemão</option>
+        <option value="Italiano">🇮🇹 Italiano</option>
+        <option value="Japonês">🇯🇵 Japonês</option>
+        <option value="Chinês">🇨🇳 Chinês</option>
+        <option value="Russo">🇷🇺 Russo</option>
+        <option value="Coreano">🇰🇷 Coreano</option>
+        <option value="Hindi">🇮🇳 Hindi</option>
+      </select>
+      <button class="swap-btn" onclick="swapLanguages()" title="Inverter idiomas">⇄</button>
+      <select class="lang-select" id="lang-to">
+        <option value="Português">🇧🇷 Português</option>
+        <option value="Inglês">🇺🇸 Inglês</option>
+        <option value="Espanhol">🇪🇸 Espanhol</option>
+        <option value="Árabe" selected>🇸🇦 Árabe</option>
+        <option value="Francês">🇫🇷 Francês</option>
+        <option value="Alemão">🇩🇪 Alemão</option>
+        <option value="Italiano">🇮🇹 Italiano</option>
+        <option value="Japonês">🇯🇵 Japonês</option>
+        <option value="Chinês">🇨🇳 Chinês</option>
+        <option value="Russo">🇷🇺 Russo</option>
+        <option value="Coreano">🇰🇷 Coreano</option>
+        <option value="Hindi">🇮🇳 Hindi</option>
+      </select>
+    </div>
+
+    <div id="status-text" class="status-msg"></div>
+    <div class="loading-bar" id="loading-text"></div>
+
+    <div class="translate-grid">
+      <div class="text-box">
+        <div class="text-box-label">// Texto original</div>
+        <textarea id="input-text" placeholder="Digite ou cole o texto aqui..." oninput="updateCharCount()"></textarea>
+        <button class="clear-btn" onclick="clearText()">✕ Limpar</button>
+        <span class="char-count" id="char-count">0 / 5000</span>
+      </div>
+      <div class="output-box">
+        <div class="text-box-label">// Tradução</div>
+        <button class="copy-btn" onclick="copyText()">⊕ Copiar</button>
+        <div class="output-text" id="output-text" style="color: var(--muted); font-style: italic;">A tradução aparecerá aqui...</div>
+      </div>
+    </div>
+
+    <button class="translate-btn" onclick="translateText()" id="btn-translate-text">
+      <span>→ Traduzir Texto</span>
+    </button>
+  </div>
+
+  <!-- IMAGE PANEL -->
+  <div class="panel" id="panel-image">
+
+    <div class="lang-bar">
+      <select class="lang-select" id="img-lang-from">
+        <option value="auto">Detectar idioma da imagem</option>
+        <option value="Português">🇧🇷 Português</option>
+        <option value="Inglês">🇺🇸 Inglês</option>
+        <option value="Espanhol">🇪🇸 Espanhol</option>
+        <option value="Árabe">🇸🇦 Árabe</option>
+        <option value="Francês">🇫🇷 Francês</option>
+        <option value="Alemão">🇩🇪 Alemão</option>
+        <option value="Italiano">🇮🇹 Italiano</option>
+        <option value="Japonês">🇯🇵 Japonês</option>
+        <option value="Chinês">🇨🇳 Chinês</option>
+        <option value="Russo">🇷🇺 Russo</option>
+        <option value="Coreano">🇰🇷 Coreano</option>
+        <option value="Hindi">🇮🇳 Hindi</option>
+      </select>
+      <div style="width:1px; background:var(--border); align-self:stretch;"></div>
+      <select class="lang-select" id="img-lang-to">
+        <option value="Português">🇧🇷 Português</option>
+        <option value="Inglês">🇺🇸 Inglês</option>
+        <option value="Espanhol">🇪🇸 Espanhol</option>
+        <option value="Árabe" selected>🇸🇦 Árabe</option>
+        <option value="Francês">🇫🇷 Francês</option>
+        <option value="Alemão">🇩🇪 Alemão</option>
+        <option value="Italiano">🇮🇹 Italiano</option>
+        <option value="Japonês">🇯🇵 Japonês</option>
+        <option value="Chinês">🇨🇳 Chinês</option>
+        <option value="Russo">🇷🇺 Russo</option>
+        <option value="Coreano">🇰🇷 Coreano</option>
+        <option value="Hindi">🇮🇳 Hindi</option>
+      </select>
+    </div>
+
+    <div id="status-image" class="status-msg"></div>
+    <div class="loading-bar" id="loading-image"></div>
+
+    <button class="change-img-btn" id="change-img-btn" onclick="resetImage()">✕ Trocar imagem</button>
+
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="img-upload" accept="image/*" onchange="handleImageUpload(event)">
+      <span class="drop-icon">⊡</span>
+      <div class="drop-title">Arraste ou clique para enviar imagem</div>
+      <div class="drop-sub">PNG, JPG, WEBP, GIF — Max 5MB</div>
+    </div>
+
+    <div class="image-preview-area" id="image-preview-area">
+      <div class="preview-card">
+        <div class="preview-card-label">// Imagem enviada</div>
+        <img id="preview-img" src="" alt="Preview">
+      </div>
+      <div class="preview-card">
+        <div class="preview-card-label">// Transcrição + Tradução</div>
+        <div class="image-result" id="image-result" style="color: var(--muted); font-style:italic;">Aguardando tradução...</div>
+      </div>
+    </div>
+
+    <button class="translate-btn" onclick="translateImage()" id="btn-translate-image">
+      <span>⊞ Transcrever & Traduzir Imagem</span>
+    </button>
+  </div>
+
+</main>
+
+<footer>
+  <span class="footer-text">TRANSLA © 2025</span>
+  <span class="footer-text">Powered by Claude AI</span>
+</footer>
+
+<script>
+  let currentImageData = null;
+  let currentImageType = null;
+
+  // ─── Aponta para o backend seguro ──────────
+  const BACKEND_URL = 'https://SEU-BACKEND.onrender.com'; // ← troque depois do deploy
+
+  async function callClaude(messages, maxTokens = 2000) {
+    const response = await fetch(`${BACKEND_URL}/translate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, max_tokens: maxTokens })
+    });
+    return response;
+  }
+
+  // ─── Mode switch ───────────────────────────
+  function switchMode(mode) {
+    document.querySelectorAll('.mode-btn').forEach((b, i) => {
+      b.classList.toggle('active', (i === 0 && mode === 'text') || (i === 1 && mode === 'image'));
+    });
+    document.getElementById('panel-text').classList.toggle('active', mode === 'text');
+    document.getElementById('panel-image').classList.toggle('active', mode === 'image');
+  }
+
+  // ─── Char count ───────────────────────────
+  function updateCharCount() {
+    const val = document.getElementById('input-text').value;
+    const el = document.getElementById('char-count');
+    el.textContent = val.length + ' / 5000';
+    el.style.color = val.length > 4500 ? 'var(--accent2)' : 'var(--muted)';
+  }
+
+  function clearText() {
+    document.getElementById('input-text').value = '';
+    document.getElementById('output-text').textContent = 'A tradução aparecerá aqui...';
+    document.getElementById('output-text').style.color = 'var(--muted)';
+    document.getElementById('output-text').style.fontStyle = 'italic';
+    updateCharCount();
+  }
+
+  function copyText() {
+    const txt = document.getElementById('output-text').textContent;
+    if (!txt || txt === 'A tradução aparecerá aqui...') return;
+    const btn = document.querySelector('.copy-btn');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(txt).then(() => {
+          btn.textContent = '✓ Copiado!';
+          setTimeout(() => btn.textContent = '⊕ Copiar', 2000);
+        });
+      } else {
+        // fallback para file:// ou contextos sem HTTPS
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = '✓ Copiado!';
+        setTimeout(() => btn.textContent = '⊕ Copiar', 2000);
+      }
+    } catch(e) {
+      btn.textContent = '✗ Erro';
+      setTimeout(() => btn.textContent = '⊕ Copiar', 2000);
+    }
+  }
+
+  // ─── Swap languages ───────────────────────
+  function swapLanguages() {
+    const from = document.getElementById('lang-from');
+    const to = document.getElementById('lang-to');
+    if (from.value === 'auto') return;
+    const tmp = from.value;
+    from.value = to.value;
+    to.value = tmp;
+    // Also swap text
+    const inputEl = document.getElementById('input-text');
+    const outputEl = document.getElementById('output-text');
+    const outText = outputEl.textContent;
+    if (outText && outText !== 'A tradução aparecerá aqui...') {
+      inputEl.value = outText;
+      outputEl.textContent = '';
+      updateCharCount();
+    }
+  }
+
+  // ─── Status ───────────────────────────────
+  function showStatus(panel, msg, type) {
+    const el = document.getElementById('status-' + panel);
+    el.textContent = msg;
+    el.className = 'status-msg show ' + type;
+  }
+  function hideStatus(panel) {
+    document.getElementById('status-' + panel).className = 'status-msg';
+  }
+  function setLoading(panel, active) {
+    document.getElementById('loading-' + panel).classList.toggle('active', active);
+  }
+
+  // ─── Text Translation ─────────────────────
+  async function translateText() {
+    const text = document.getElementById('input-text').value.trim();
+    if (!text) { showStatus('text', 'Digite algum texto para traduzir.', 'error'); return; }
+    if (text.length > 5000) { showStatus('text', 'Texto muito longo (máximo 5000 caracteres).', 'error'); return; }
+
+    const langFrom = document.getElementById('lang-from').value;
+    const langTo = document.getElementById('lang-to').value;
+
+    const fromLabel = langFrom === 'auto' ? 'idioma original' : langFrom;
+
+    const btn = document.getElementById('btn-translate-text');
+    btn.disabled = true;
+    setLoading('text', true);
+    hideStatus('text');
+
+    const outputEl = document.getElementById('output-text');
+    outputEl.innerHTML = '<div class="shimmer" style="width:80%"></div><div class="shimmer" style="width:60%"></div><div class="shimmer" style="width:75%"></div>';
+
+    const prompt = `Você é um tradutor profissional. Traduza o texto abaixo do ${fromLabel} para ${langTo}. Retorne APENAS a tradução, sem explicações, sem prefixos como "Tradução:" ou similar.
+
+Texto:
+${text}`;
+
+    try {
+      const response = await callClaude([{ role: 'user', content: prompt }]);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errMsg = data.error?.message || 'Erro na API';
+        showStatus('text', 'Erro: ' + errMsg, 'error');
+        outputEl.textContent = 'A tradução aparecerá aqui...';
+        outputEl.style.color = 'var(--muted)';
+        outputEl.style.fontStyle = 'italic';
+      } else {
+        const translated = data.content?.[0]?.text || '';
+        outputEl.textContent = translated;
+        outputEl.style.color = 'var(--text)';
+        outputEl.style.fontStyle = 'normal';
+        showStatus('text', '✓ Tradução concluída', 'success');
+        setTimeout(() => hideStatus('text'), 3000);
+      }
+    } catch (err) {
+      showStatus('text', 'Erro de conexão: ' + err.message, 'error');
+      outputEl.textContent = 'A tradução aparecerá aqui...';
+      outputEl.style.color = 'var(--muted)';
+      outputEl.style.fontStyle = 'italic';
+    }
+
+    btn.disabled = false;
+    setLoading('text', false);
+  }
+
+  // ─── Image handling ───────────────────────
+  function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      showStatus('image', 'Imagem muito grande (máximo 5MB).', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target.result;
+      const base64 = result.split(',')[1];
+      currentImageData = base64;
+      currentImageType = file.type;
+
+      document.getElementById('preview-img').src = result;
+      document.getElementById('drop-zone').style.display = 'none';
+      document.getElementById('image-preview-area').classList.add('show');
+      document.getElementById('change-img-btn').classList.add('show');
+      document.getElementById('image-result').textContent = 'Clique em "Transcrever & Traduzir" para processar.';
+      document.getElementById('image-result').style.color = 'var(--muted)';
+      document.getElementById('image-result').style.fontStyle = 'italic';
+      hideStatus('image');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function resetImage() {
+    currentImageData = null;
+    currentImageType = null;
+    document.getElementById('drop-zone').style.display = 'block';
+    document.getElementById('image-preview-area').classList.remove('show');
+    document.getElementById('change-img-btn').classList.remove('show');
+    document.getElementById('img-upload').value = '';
+    document.getElementById('image-result').textContent = 'Aguardando tradução...';
+    hideStatus('image');
+  }
+
+  // Drag & drop
+  const dropZone = document.getElementById('drop-zone');
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const fakeEvent = { target: { files: [file] } };
+      handleImageUpload(fakeEvent);
+    }
+  });
+
+  // ─── Image Translation ────────────────────
+  async function translateImage() {
+    if (!currentImageData) { showStatus('image', 'Envie uma imagem primeiro.', 'error'); return; }
+
+    const langFrom = document.getElementById('img-lang-from').value;
+    const langTo = document.getElementById('img-lang-to').value;
+    const fromLabel = langFrom === 'auto' ? 'qualquer idioma presente' : langFrom;
+
+    const btn = document.getElementById('btn-translate-image');
+    btn.disabled = true;
+    setLoading('image', true);
+    hideStatus('image');
+
+    const resultEl = document.getElementById('image-result');
+    resultEl.innerHTML = '<div class="shimmer" style="width:90%"></div><div class="shimmer" style="width:70%"></div><div class="shimmer" style="width:80%"></div><div class="shimmer" style="width:50%"></div>';
+    resultEl.style.fontStyle = 'normal';
+
+    const prompt = `Analise esta imagem cuidadosamente. Faça as seguintes tarefas:
+
+1. **TRANSCRIÇÃO**: Identifique e transcreva TODO o texto visível na imagem, preservando a estrutura original.
+
+2. **TRADUÇÃO**: Traduza o texto transcrito do ${fromLabel} para ${langTo}.
+
+Formate a resposta assim:
+
+📋 TRANSCRIÇÃO ORIGINAL:
+[texto original da imagem]
+
+🌐 TRADUÇÃO PARA ${langTo.toUpperCase()}:
+[tradução completa]
+
+Se não houver texto na imagem, informe claramente.`;
+
+    try {
+      const response = await callClaude([{
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: currentImageType,
+              data: currentImageData
+            }
+          },
+          { type: 'text', text: prompt }
+        ]
+      }]);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errMsg = data.error?.message || 'Erro na API';
+        showStatus('image', 'Erro: ' + errMsg, 'error');
+        resultEl.textContent = 'Erro ao processar.';
+        resultEl.style.color = 'var(--accent2)';
+      } else {
+        const result = data.content?.[0]?.text || '';
+        resultEl.textContent = result;
+        resultEl.style.color = 'var(--text)';
+        resultEl.style.fontStyle = 'normal';
+        showStatus('image', '✓ Transcrição e tradução concluídas', 'success');
+        setTimeout(() => hideStatus('image'), 3000);
+      }
+    } catch (err) {
+      showStatus('image', 'Erro de conexão: ' + err.message, 'error');
+      resultEl.textContent = 'Erro ao conectar.';
+      resultEl.style.color = 'var(--accent2)';
+    }
+
+    btn.disabled = false;
+    setLoading('image', false);
+  }
+
+  // Enter to translate
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+      if (document.getElementById('panel-text').classList.contains('active')) translateText();
+      else translateImage();
+    }
+  });
+  // ─── PWA Service Worker ──────────────────
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+
+  // ─── Install prompt ───────────────────────
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.getElementById('install-btn');
+    if (btn) btn.style.display = 'flex';
+  });
+
+  window.addEventListener('appinstalled', () => {
+    const btn = document.getElementById('install-btn');
+    if (btn) btn.style.display = 'none';
+    deferredPrompt = null;
+  });
+
+  function installApp() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+    }
+  }
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
